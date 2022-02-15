@@ -88,7 +88,7 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-
+    
     #Create a stack to implement DFS and array to track visited nodes 
     nodesToExplore = []
     visitedNodes = []
@@ -115,7 +115,6 @@ def depthFirstSearch(problem):
 
     print("No Solution")
     return []
-    #util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Solution to Q1"""
@@ -148,12 +147,38 @@ def breadthFirstSearch(problem):
 
     print("No Solution")
     return []
-    util.raiseNotDefined()
 
 def uniformCostSearch(problem):
+
+    """Solution to Q3"""
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    nodesToExplore = util.PriorityQueue()
+    visitedNodes = []
+
+    #Add the start state to the frontier
+    start_state = (problem.getStartState(),[],0)
+    nodesToExplore.update(start_state,0)
+
+    while not nodesToExplore.isEmpty():
+        #Get the node on top of stack from nodes to explore
+        currentNode,goal_path,cost = nodesToExplore.pop()
+
+        #Goal Test
+        if problem.isGoalState(currentNode):
+            return goal_path
+
+        #Add successors to stack
+        if currentNode not in visitedNodes:
+            visitedNodes.append(currentNode)
+            successors = problem.getSuccessors(currentNode)
+            for successor in successors:
+                new_goal_path = goal_path + [successor[1]]
+                new_cost = cost + successor[2]
+                new_node = (successor[0],new_goal_path,new_cost)
+                nodesToExplore.update(new_node,new_cost)
+
+    print("No Solution")
+    return []
 
 def nullHeuristic(state, problem=None):
     """
