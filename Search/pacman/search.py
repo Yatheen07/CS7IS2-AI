@@ -117,7 +117,7 @@ def depthFirstSearch(problem):
     return []
 
 def breadthFirstSearch(problem):
-    """Solution to Q1"""
+    """Solution to Q2"""
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     #Create a stack to implement DFS and array to track visited nodes 
@@ -188,10 +188,53 @@ def nullHeuristic(state, problem=None):
     return 0
 
 def aStarSearch(problem, heuristic=nullHeuristic):
+    """Solution to Q4"""
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    nodesToExplore = util.PriorityQueue()
+    visitedNodes = []
 
+    #Add the start state to the frontier
+    start_state = (problem.getStartState(),[],0)
+    nodesToExplore.push(start_state,0)
+
+    #distance_matrix
+    distance = {problem.getStartState() : 0}
+
+    while not nodesToExplore.isEmpty():
+        #Get the node on top of stack from nodes to explore
+        currentNode,goal_path,path_cost = nodesToExplore.pop()
+        path_cost = distance[currentNode]
+
+        #Goal Test
+        if problem.isGoalState(currentNode):
+            return goal_path
+
+        #Add successors to stack
+        if currentNode not in visitedNodes:
+            visitedNodes.append(currentNode)
+            successors = problem.getSuccessors(currentNode)
+            for successor in successors:
+                if successor not in visitedNodes:
+                    successorNode,action, stepCost = successor[0],successor[1],successor[2]
+                    
+                    new_goal_path = goal_path + [action]
+                    new_cost = path_cost + stepCost + heuristic(successorNode,problem)
+                    new_node = (successorNode,new_goal_path,new_cost)
+
+                    if successorNode in distance and distance[successorNode] < stepCost + path_cost:
+                        continue
+
+                    if successorNode in distance:
+                        print("inhere")
+                        nodesToExplore.update(new_node, stepCost + path_cost + heuristic(successorNode, problem))
+                    else:
+                        nodesToExplore.push(new_node, stepCost + path_cost + heuristic(successorNode, problem))
+                    
+                    distance[successorNode] = path_cost + stepCost
+
+    print("No Solution")
+    return []
 
 # Abbreviations
 bfs = breadthFirstSearch
